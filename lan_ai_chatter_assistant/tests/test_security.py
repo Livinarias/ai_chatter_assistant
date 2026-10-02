@@ -13,46 +13,46 @@ class TestSecurity(AITestCase):
 
     def test_group_ai_user_exists(self):
         """The group_ai_user security group is properly defined."""
-        group = self.env.ref("ai_chatter_assistant.group_ai_user")
+        group = self.env.ref("lan_ai_chatter_assistant.group_ai_user")
         self.assertTrue(group.exists())
 
     def test_ai_user_has_group(self):
         """The test AI user belongs to group_ai_user."""
-        self.assertTrue(self.ai_user.has_group("ai_chatter_assistant.group_ai_user"))
+        self.assertTrue(self.ai_user.has_group("lan_ai_chatter_assistant.group_ai_user"))
 
     def test_non_ai_user_lacks_group(self):
         """The non-AI test user does not belong to group_ai_user."""
         self.assertFalse(
-            self.non_ai_user.has_group("ai_chatter_assistant.group_ai_user")
+            self.non_ai_user.has_group("lan_ai_chatter_assistant.group_ai_user")
         )
 
     def test_ai_user_inherits_internal_user(self):
         """group_ai_user implies base.group_user."""
-        group = self.env.ref("ai_chatter_assistant.group_ai_user")
+        group = self.env.ref("lan_ai_chatter_assistant.group_ai_user")
         internal = self.env.ref("base.group_user")
         self.assertIn(internal, group.implied_ids)
 
     def test_non_admin_cannot_read_ai_config_params(self):
-        """Record rule hides ai_chatter_assistant.* params from non-admins."""
+        """Record rule hides lan_ai_chatter_assistant.* params from non-admins."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_provider", "openai")
+        ICP.set_param("lan_ai_chatter_assistant.ai_provider", "openai")
 
         # Switch to non-admin user
         ICP_user = self.env["ir.config_parameter"].with_user(self.ai_user)
-        params = ICP_user.search([("key", "like", "ai_chatter_assistant.%")])
+        params = ICP_user.search([("key", "like", "lan_ai_chatter_assistant.%")])
         # Record rule should filter these out
         self.assertFalse(
             params,
-            "Non-admin users should not see ai_chatter_assistant.* params.",
+            "Non-admin users should not see lan_ai_chatter_assistant.* params.",
         )
 
     def test_admin_can_read_ai_config_params(self):
         """Admins bypass record rules and can see AI params."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_provider", "openai")
+        ICP.set_param("lan_ai_chatter_assistant.ai_provider", "openai")
 
         # Admin search — should find the param
-        params = ICP.search([("key", "=", "ai_chatter_assistant.ai_provider")])
+        params = ICP.search([("key", "=", "lan_ai_chatter_assistant.ai_provider")])
         self.assertTrue(params.exists())
 
     def test_ai_user_can_create_usage_log(self):

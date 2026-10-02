@@ -67,7 +67,7 @@ class AIUsageLog(models.TransientModel):
         ``ai_chatter_assistant.ai_rate_limit_per_hour`` (default 50).
         """
         ICP = self.env["ir.config_parameter"].sudo()
-        limit = int(ICP.get_param("ai_chatter_assistant.ai_rate_limit_per_hour", "50"))
+        limit = int(ICP.get_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "50"))
         if limit <= 0:
             return False  # 0 = unlimited
 

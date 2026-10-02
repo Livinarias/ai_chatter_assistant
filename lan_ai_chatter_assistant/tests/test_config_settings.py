@@ -20,10 +20,10 @@ class TestConfigSettings(AITestCase):
         settings.set_values()
 
         ICP = self.env["ir.config_parameter"].sudo()
-        self.assertEqual(ICP.get_param("ai_chatter_assistant.ai_provider"), "anthropic")
+        self.assertEqual(ICP.get_param("lan_ai_chatter_assistant.ai_provider"), "anthropic")
 
     @patch(
-        "ai_chatter_assistant.models.res_config_settings.encrypt_api_key",
+        "lan_ai_chatter_assistant.models.res_config_settings.encrypt_api_key",
         return_value="encrypted-value",
     )
     def test_set_values_encrypts_api_key(self, mock_encrypt):
@@ -37,7 +37,7 @@ class TestConfigSettings(AITestCase):
 
         ICP = self.env["ir.config_parameter"].sudo()
         self.assertEqual(
-            ICP.get_param("ai_chatter_assistant.ai_api_key"),
+            ICP.get_param("lan_ai_chatter_assistant.ai_api_key"),
             "encrypted-value",
         )
 
@@ -53,26 +53,26 @@ class TestConfigSettings(AITestCase):
                 settings.set_values()
 
     @patch(
-        "ai_chatter_assistant.models.res_config_settings.decrypt_api_key",
+        "lan_ai_chatter_assistant.models.res_config_settings.decrypt_api_key",
         return_value="sk-decrypted",
     )
     def test_get_values_decrypts_api_key(self, mock_decrypt):
         """API key is decrypted when loading settings."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_api_key", "encrypted-value")
+        ICP.set_param("lan_ai_chatter_assistant.ai_api_key", "encrypted-value")
 
         settings = self.env["res.config.settings"].create({})
         values = settings.get_values()
         self.assertEqual(values["ai_api_key"], "sk-decrypted")
 
     @patch(
-        "ai_chatter_assistant.models.res_config_settings.decrypt_api_key",
+        "lan_ai_chatter_assistant.models.res_config_settings.decrypt_api_key",
         side_effect=ValueError("Cannot decrypt"),
     )
     def test_get_values_handles_decrypt_failure(self, mock_decrypt):
         """Graceful fallback when decryption fails."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_api_key", "bad-data")
+        ICP.set_param("lan_ai_chatter_assistant.ai_api_key", "bad-data")
 
         settings = self.env["res.config.settings"].create({})
         values = settings.get_values()
@@ -105,7 +105,7 @@ class TestConfigSettings(AITestCase):
             settings.action_ai_test_connection()
 
     @patch(
-        "ai_chatter_assistant.services.providers.base.requests.post",
+        "lan_ai_chatter_assistant.services.providers.base.requests.post",
         return_value=_make_mock_response(MOCK_OPENAI_RESPONSE),
     )
     def test_test_connection_success(self, mock_post):
@@ -126,10 +126,10 @@ class TestConfigSettings(AITestCase):
         """Encryption key is automatically created in ir.config_parameter if not present."""
         ICP = self.env["ir.config_parameter"].sudo()
         # Remove any existing key
-        ICP.search([("key", "=", "ai_chatter_assistant.encryption_key")]).unlink()
+        ICP.search([("key", "=", "lan_ai_chatter_assistant.encryption_key")]).unlink()
 
         from ..services.encryption import get_or_create_encryption_key
 
         key = get_or_create_encryption_key(self.env)
         self.assertTrue(key)
-        self.assertEqual(ICP.get_param("ai_chatter_assistant.encryption_key"), key)
+        self.assertEqual(ICP.get_param("lan_ai_chatter_assistant.encryption_key"), key)

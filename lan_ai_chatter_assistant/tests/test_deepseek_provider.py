@@ -40,7 +40,7 @@ class TestDeepSeekProvider(unittest.TestCase):
         self.assertEqual(result["content"], "This is a test AI response.")
         self.assertEqual(result["tokens_used"], 150)
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_chat_completion_success(self, mock_post):
         mock_post.return_value = _make_mock_response(MOCK_OPENAI_RESPONSE)
         result = self.provider.chat_completion(

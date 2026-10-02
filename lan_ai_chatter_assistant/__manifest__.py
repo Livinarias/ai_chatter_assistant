@@ -5,7 +5,7 @@
     "category": "Productivity",
     "summary": "AI summaries, smart reply drafts, and CRM lead generation in Chatter",
     "description": """
-AI Chatter Assistant
+LAN AI Chatter Assistant
 ====================
 AI-powered productivity assistant integrated directly into Odoo Chatter and CRM.
 
@@ -53,8 +53,8 @@ endpoint selected in your settings (OpenAI, Anthropic, DeepSeek, or OpenRouter) 
     ],
     "assets": {
         "web.assets_backend": [
-            "ai_chatter_assistant/static/src/xml/chatter_ai_buttons.xml",
-            "ai_chatter_assistant/static/src/js/chatter.js",
+            "lan_ai_chatter_assistant/static/src/xml/chatter_ai_buttons.xml",
+            "lan_ai_chatter_assistant/static/src/js/chatter.js",
         ],
     },
     "demo": [],

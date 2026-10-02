@@ -39,7 +39,7 @@ class TestRateLimiting(AITestCase):
     def test_at_limit_is_rate_limited(self):
         """User with exactly the limit number of calls is blocked."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_rate_limit_per_hour", "5")
+        ICP.set_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "5")
         self._create_log_entries(self.ai_user, 5)
 
         UsageLog = self.env["ai.usage.log"].sudo()
@@ -48,7 +48,7 @@ class TestRateLimiting(AITestCase):
     def test_zero_limit_means_unlimited(self):
         """Setting rate limit to 0 disables rate limiting."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_rate_limit_per_hour", "0")
+        ICP.set_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "0")
         self._create_log_entries(self.ai_user, 1000)
 
         UsageLog = self.env["ai.usage.log"].sudo()
@@ -57,7 +57,7 @@ class TestRateLimiting(AITestCase):
     def test_error_entries_not_counted(self):
         """Error log entries should not count toward the rate limit."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_rate_limit_per_hour", "5")
+        ICP.set_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "5")
 
         UsageLog = self.env["ai.usage.log"].sudo()
         for _ in range(10):
@@ -75,7 +75,7 @@ class TestRateLimiting(AITestCase):
     def test_old_entries_not_counted(self):
         """Entries older than 1 hour should not count."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_rate_limit_per_hour", "5")
+        ICP.set_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "5")
 
         UsageLog = self.env["ai.usage.log"].sudo()
         old_time = fields.Datetime.now() - timedelta(hours=2)
@@ -95,7 +95,7 @@ class TestRateLimiting(AITestCase):
     def test_different_users_independent(self):
         """Rate limits are per-user, not global."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_rate_limit_per_hour", "5")
+        ICP.set_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "5")
         self._create_log_entries(self.ai_user, 5)
 
         # Give the non-ai user the group temporarily for this test

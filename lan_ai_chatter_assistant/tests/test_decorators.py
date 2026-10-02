@@ -29,11 +29,11 @@ class TestAIFeatureDecorator(AITestCase):
             partner.action_ai_summarize()
 
     @patch(
-        "ai_chatter_assistant.services.providers.base.requests.post",
+        "lan_ai_chatter_assistant.services.providers.base.requests.post",
         return_value=_make_mock_response(MOCK_OPENAI_RESPONSE),
     )
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_user_with_group_succeeds(self, mock_decrypt, mock_post):
@@ -51,11 +51,11 @@ class TestAIFeatureDecorator(AITestCase):
         self.assertIn("content", result)
 
     @patch(
-        "ai_chatter_assistant.services.providers.base.requests.post",
+        "lan_ai_chatter_assistant.services.providers.base.requests.post",
         return_value=_make_mock_response(MOCK_OPENAI_RESPONSE),
     )
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_decorator_logs_success(self, mock_decrypt, mock_post):
@@ -83,7 +83,7 @@ class TestAIFeatureDecorator(AITestCase):
         self.assertTrue(log.exists())
 
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_decorator_logs_error(self, mock_decrypt):
@@ -96,7 +96,7 @@ class TestAIFeatureDecorator(AITestCase):
         partner.message_post(body="Test content")
 
         with patch(
-            "ai_chatter_assistant.services.providers.base.requests.post",
+            "lan_ai_chatter_assistant.services.providers.base.requests.post",
             side_effect=Exception("API down"),
         ):
             with self.assertRaises(Exception):
