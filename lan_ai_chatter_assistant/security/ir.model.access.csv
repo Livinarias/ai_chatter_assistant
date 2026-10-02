@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ai_usage_log_user,ai.usage.log user,model_ai_usage_log,ai_chatter_assistant.group_ai_user,1,0,1,0
+access_ai_usage_log_user,ai.usage.log user,model_ai_usage_log,lan_ai_chatter_assistant.group_ai_user,1,0,1,0
 access_ai_usage_log_admin,ai.usage.log admin,model_ai_usage_log,base.group_system,1,1,1,1
-access_ai_reply_wizard_user,ai.reply.wizard user,model_ai_reply_wizard,ai_chatter_assistant.group_ai_user,1,1,1,1
+access_ai_reply_wizard_user,ai.reply.wizard user,model_ai_reply_wizard,lan_ai_chatter_assistant.group_ai_user,1,1,1,1

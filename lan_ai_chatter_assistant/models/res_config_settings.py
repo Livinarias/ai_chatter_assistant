@@ -24,7 +24,7 @@ from ..services.providers.factory import AIProviderFactory
 _logger = logging.getLogger(__name__)
 
 # Config-parameter prefix
-_P = "ai_chatter_assistant"
+_P = "lan_ai_chatter_assistant"
 
 
 class ResConfigSettings(models.TransientModel):

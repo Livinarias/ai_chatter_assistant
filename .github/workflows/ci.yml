@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ADDON_NAME: ai_chatter_assistant
+  ADDON_NAME: lan_ai_chatter_assistant
 
 jobs:
   # -----------------------------------------------------------------------

@@ -28,11 +28,11 @@ class TestCrmLead(AITestCase):
         )
 
     @patch(
-        "ai_chatter_assistant.services.providers.base.requests.post",
+        "lan_ai_chatter_assistant.services.providers.base.requests.post",
         return_value=_make_mock_response(MOCK_LEAD_JSON_RESPONSE),
     )
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_create_lead_from_thread(self, mock_decrypt, mock_post):
@@ -52,7 +52,7 @@ class TestCrmLead(AITestCase):
         self.assertTrue(lead.ai_generated)
 
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_create_lead_no_messages_raises(self, mock_decrypt):

@@ -34,11 +34,11 @@ class TestMailThread(AITestCase):
             )
 
     @patch(
-        "ai_chatter_assistant.services.providers.base.requests.post",
+        "lan_ai_chatter_assistant.services.providers.base.requests.post",
         return_value=_make_mock_response(MOCK_OPENAI_RESPONSE),
     )
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_summarize_posts_internal_note(self, mock_decrypt, mock_post):
@@ -59,7 +59,7 @@ class TestMailThread(AITestCase):
         self.assertIn("AI Summary", notes[0].body)
 
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_summarize_no_messages_raises(self, mock_decrypt):
@@ -93,27 +93,27 @@ class TestMailThread(AITestCase):
         self.assertLessEqual(len(lines), 5)
 
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_get_provider_and_params_no_provider(self, mock_decrypt):
         """UserError when no provider is configured."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_provider", "")
+        ICP.set_param("lan_ai_chatter_assistant.ai_provider", "")
 
         with self.assertRaises(UserError) as ctx:
             self.partner._ai_get_provider_and_params()
         self.assertIn("No AI provider", str(ctx.exception))
 
     @patch(
-        "ai_chatter_assistant.services.encryption.decrypt_api_key",
+        "lan_ai_chatter_assistant.services.encryption.decrypt_api_key",
         return_value="sk-test",
     )
     def test_get_provider_and_params_no_key(self, mock_decrypt):
         """UserError when no API key is stored."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_provider", "openai")
-        ICP.set_param("ai_chatter_assistant.ai_api_key", "")
+        ICP.set_param("lan_ai_chatter_assistant.ai_provider", "openai")
+        ICP.set_param("lan_ai_chatter_assistant.ai_api_key", "")
 
         with self.assertRaises(UserError) as ctx:
             self.partner._ai_get_provider_and_params()

@@ -90,7 +90,7 @@ class AITestCase(TransactionCase):
                         0,
                         [
                             cls.env.ref("base.group_user").id,
-                            cls.env.ref("ai_chatter_assistant.group_ai_user").id,
+                            cls.env.ref("lan_ai_chatter_assistant.group_ai_user").id,
                         ],
                     )
                 ],
@@ -112,12 +112,12 @@ class AITestCase(TransactionCase):
     ):
         """Configure AI settings for tests using mock encryption."""
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("ai_chatter_assistant.ai_provider", provider)
-        ICP.set_param("ai_chatter_assistant.ai_model_name", model)
-        ICP.set_param("ai_chatter_assistant.ai_timeout", "15")
-        ICP.set_param("ai_chatter_assistant.ai_temperature", "0.3")
-        ICP.set_param("ai_chatter_assistant.ai_max_tokens", "1024")
-        ICP.set_param("ai_chatter_assistant.ai_rate_limit_per_hour", "50")
+        ICP.set_param("lan_ai_chatter_assistant.ai_provider", provider)
+        ICP.set_param("lan_ai_chatter_assistant.ai_model_name", model)
+        ICP.set_param("lan_ai_chatter_assistant.ai_timeout", "15")
+        ICP.set_param("lan_ai_chatter_assistant.ai_temperature", "0.3")
+        ICP.set_param("lan_ai_chatter_assistant.ai_max_tokens", "1024")
+        ICP.set_param("lan_ai_chatter_assistant.ai_rate_limit_per_hour", "50")
         # Store the key as-is for test simplicity; encryption tests
         # are in test_encryption.py
-        ICP.set_param("ai_chatter_assistant.ai_api_key", api_key)
+        ICP.set_param("lan_ai_chatter_assistant.ai_api_key", api_key)

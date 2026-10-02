@@ -51,7 +51,7 @@ class TestOpenAIProvider(unittest.TestCase):
 
     # -- Full chat_completion -------------------------------------------
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_chat_completion_success(self, mock_post):
         mock_post.return_value = _make_mock_response(MOCK_OPENAI_RESPONSE)
         result = self.provider.chat_completion(
@@ -61,7 +61,7 @@ class TestOpenAIProvider(unittest.TestCase):
         self.assertEqual(result["content"], "This is a test AI response.")
         mock_post.assert_called_once()
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_chat_completion_401_raises(self, mock_post):
         mock_post.return_value = _make_mock_response(
             {"error": {"message": "Invalid key"}}, status_code=401
@@ -72,7 +72,7 @@ class TestOpenAIProvider(unittest.TestCase):
             )
         self.assertIn("Invalid or expired", str(ctx.exception))
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_chat_completion_429_raises(self, mock_post):
         mock_post.return_value = _make_mock_response({}, status_code=429)
         with self.assertRaises(AIProviderError) as ctx:
@@ -81,7 +81,7 @@ class TestOpenAIProvider(unittest.TestCase):
             )
         self.assertIn("Rate limit", str(ctx.exception))
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_chat_completion_timeout_raises(self, mock_post):
         import requests as req
 
@@ -92,7 +92,7 @@ class TestOpenAIProvider(unittest.TestCase):
             )
         self.assertIn("timed out", str(ctx.exception))
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_chat_completion_connection_error_raises(self, mock_post):
         import requests as req
 
@@ -105,7 +105,7 @@ class TestOpenAIProvider(unittest.TestCase):
 
     # -- Test connection ------------------------------------------------
 
-    @patch("ai_chatter_assistant.services.providers.base.requests.post")
+    @patch("lan_ai_chatter_assistant.services.providers.base.requests.post")
     def test_test_connection_success(self, mock_post):
         mock_post.return_value = _make_mock_response(MOCK_OPENAI_RESPONSE)
         self.assertTrue(self.provider.test_connection(model="gpt-4o-mini"))
