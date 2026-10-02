@@ -81,7 +81,11 @@ jobs:
       - name: Create Odoo addons symlink
         run: |
           # Link our addon into the Odoo addons path
-          ln -s $GITHUB_WORKSPACE/$ADDON_NAME /opt/odoo/addons/$ADDON_NAME
+          if [ -d "$GITHUB_WORKSPACE/$ADDON_NAME" ]; then
+            ln -s "$GITHUB_WORKSPACE/$ADDON_NAME" /opt/odoo/addons/$ADDON_NAME
+          else
+            ln -s "$GITHUB_WORKSPACE" /opt/odoo/addons/$ADDON_NAME
+          fi
 
       - name: Run tests with coverage
         run: |

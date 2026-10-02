@@ -2,7 +2,7 @@
 
 """Shared test fixtures and mock data for AI tests."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from odoo.tests import TransactionCase
 
@@ -90,9 +90,7 @@ class AITestCase(TransactionCase):
                         0,
                         [
                             cls.env.ref("base.group_user").id,
-                            cls.env.ref(
-                                "ai_chatter_assistant.group_ai_user"
-                            ).id,
+                            cls.env.ref("ai_chatter_assistant.group_ai_user").id,
                         ],
                     )
                 ],
@@ -105,9 +103,7 @@ class AITestCase(TransactionCase):
                 "name": "Non-AI Test User",
                 "login": "non_ai_test_user",
                 "email": "non_ai_test@example.com",
-                "groups_id": [
-                    (6, 0, [cls.env.ref("base.group_user").id])
-                ],
+                "groups_id": [(6, 0, [cls.env.ref("base.group_user").id])],
             }
         )
 

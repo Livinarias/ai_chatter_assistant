@@ -34,9 +34,7 @@ class AIProviderFactory:
         Called at module-import time by each concrete provider module.
         """
         if not issubclass(provider_class, AIProvider):
-            raise TypeError(
-                f"{provider_class!r} must be a subclass of AIProvider."
-            )
+            raise TypeError(f"{provider_class!r} must be a subclass of AIProvider.")
         cls._registry[name] = provider_class
         _logger.debug("Registered AI provider: %s → %s", name, provider_class.__name__)
 
@@ -51,8 +49,7 @@ class AIProviderFactory:
         if provider_class is None:
             available = ", ".join(sorted(cls._registry)) or "(none)"
             raise AIProviderError(
-                f"Unknown AI provider '{provider_name}'. "
-                f"Available: {available}."
+                f"Unknown AI provider '{provider_name}'. " f"Available: {available}."
             )
         return provider_class(api_key=api_key)
 

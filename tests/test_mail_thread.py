@@ -7,7 +7,7 @@ from unittest.mock import patch
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from .common import AITestCase, MOCK_OPENAI_RESPONSE, _make_mock_response
+from .common import MOCK_OPENAI_RESPONSE, AITestCase, _make_mock_response
 
 
 @tagged("post_install", "-at_install")
@@ -89,7 +89,7 @@ class TestMailThread(AITestCase):
         self._post_messages(self.partner, count=15)
         text = self.partner._ai_collect_messages(5)
         # Count lines (each message = one line)
-        lines = [l for l in text.split("\n") if l.strip()]
+        lines = [line for line in text.split("\n") if line.strip()]
         self.assertLessEqual(len(lines), 5)
 
     @patch(

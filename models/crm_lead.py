@@ -13,10 +13,8 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from ..services.decorators import ai_feature
-from ..services.encryption import decrypt_api_key
 from ..services.prompts import LEAD_EXTRACT_SYSTEM_PROMPT, LEAD_EXTRACT_USER_PROMPT
 from ..services.providers.base import AIProviderError
-from ..services.providers.factory import AIProviderFactory
 
 _logger = logging.getLogger(__name__)
 
@@ -54,18 +52,14 @@ class CrmLead(models.Model):
         # 1. Collect messages -------------------------------------------
         messages_text = source._ai_collect_messages(10)
         if not messages_text:
-            raise UserError(
-                _("There are no messages to analyse for lead generation.")
-            )
+            raise UserError(_("There are no messages to analyse for lead generation."))
 
         # 2. Build prompt -----------------------------------------------
         ai_messages = [
             {"role": "system", "content": LEAD_EXTRACT_SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": LEAD_EXTRACT_USER_PROMPT.format(
-                    messages=messages_text
-                ),
+                "content": LEAD_EXTRACT_USER_PROMPT.format(messages=messages_text),
             },
         ]
 
@@ -75,12 +69,12 @@ class CrmLead(models.Model):
         kwargs["max_tokens"] = min(kwargs.get("max_tokens", 1024), 500)
         _logger.info(
             "AI Lead: Requesting opportunity extraction from %s via %s (model=%s)...",
-            source_model, provider.name, model
+            source_model,
+            provider.name,
+            model,
         )
         try:
-            result = provider.chat_completion(
-                ai_messages, model, **kwargs
-            )
+            result = provider.chat_completion(ai_messages, model, **kwargs)
         except AIProviderError as exc:
             raise UserError(str(exc)) from exc
 
@@ -105,7 +99,9 @@ class CrmLead(models.Model):
                 lead_vals["phone"] = source.phone
 
         lead = self.create(lead_vals)
-        _logger.info("AI created CRM lead #%s from %s(%s)", lead.id, source_model, source_id)
+        _logger.info(
+            "AI created CRM lead #%s from %s(%s)", lead.id, source_model, source_id
+        )
 
         result["lead_id"] = lead.id
         return result
@@ -133,7 +129,11 @@ class CrmLead(models.Model):
             if match:
                 text = match.group(1).strip()
             else:
-                lines = [l for l in text.splitlines() if not l.strip().startswith("```")]
+                lines = [
+                    line
+                    for line in text.splitlines()
+                    if not line.strip().startswith("```")
+                ]
                 text = "\n".join(lines).strip()
 
         # 3. Find outermost JSON object { ... }

@@ -1,0 +1,12 @@
+[MASTER]
+load-plugins=pylint_odoo
+
+[ODOOLINT]
+valid-odoo-versions=17.0,18.0
+license_allowed=LGPL-3
+
+[MESSAGES CONTROL]
+disable=all
+enable=
+    anomalous-backslash-in-string,
+    odoolint

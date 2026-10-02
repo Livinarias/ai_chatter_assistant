@@ -34,9 +34,7 @@ class TestOpenRouterProvider(unittest.TestCase):
 
     def test_payload_openai_compatible(self):
         msgs = [{"role": "user", "content": "Hi"}]
-        payload = self.provider._build_payload(
-            msgs, "openai/gpt-4o-mini", 0.7, 2048
-        )
+        payload = self.provider._build_payload(msgs, "openai/gpt-4o-mini", 0.7, 2048)
         self.assertEqual(payload["model"], "openai/gpt-4o-mini")
 
     def test_parse_response_openai_format(self):

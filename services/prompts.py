@@ -21,9 +21,7 @@ SUMMARY_SYSTEM_PROMPT = (
     "- Do NOT invent information that is not present in the messages."
 )
 
-SUMMARY_USER_PROMPT = (
-    "Summarise the following conversation thread:\n\n{messages}"
-)
+SUMMARY_USER_PROMPT = "Summarise the following conversation thread:\n\n{messages}"
 
 # ---------------------------------------------------------------------------
 # Reply draft

@@ -50,4 +50,11 @@ class TestDeepSeekProvider(unittest.TestCase):
         self.assertEqual(result["content"], "This is a test AI response.")
         # Verify correct endpoint was called
         call_args = mock_post.call_args
-        self.assertIn("deepseek.com", call_args[0][0] if call_args[0] else call_args.kwargs.get("url", call_args[0][0]))
+        self.assertIn(
+            "deepseek.com",
+            (
+                call_args[0][0]
+                if call_args[0]
+                else call_args.kwargs.get("url", call_args[0][0])
+            ),
+        )

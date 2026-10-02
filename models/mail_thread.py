@@ -48,27 +48,21 @@ class MailThread(models.AbstractModel):
         # 1. Collect messages -------------------------------------------
         messages_text = self._ai_collect_messages(_MAX_MESSAGES)
         if not messages_text:
-            raise UserError(
-                _("There are no messages in this thread to summarise.")
-            )
+            raise UserError(_("There are no messages in this thread to summarise."))
 
         # 2. Build prompt -----------------------------------------------
         ai_messages = [
             {"role": "system", "content": SUMMARY_SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": SUMMARY_USER_PROMPT.format(
-                    messages=messages_text
-                ),
+                "content": SUMMARY_USER_PROMPT.format(messages=messages_text),
             },
         ]
 
         # 3. Call AI ----------------------------------------------------
         provider, model, kwargs = self._ai_get_provider_and_params()
         try:
-            result = provider.chat_completion(
-                ai_messages, model, **kwargs
-            )
+            result = provider.chat_completion(ai_messages, model, **kwargs)
         except AIProviderError as exc:
             raise UserError(str(exc)) from exc
 
@@ -76,7 +70,7 @@ class MailThread(models.AbstractModel):
         summary = result.get("content", "")
         if summary:
             # Parse lines into clean HTML bullets
-            lines = [l.strip() for l in summary.splitlines() if l.strip()]
+            lines = [line.strip() for line in summary.splitlines() if line.strip()]
             bullet_items = []
             for line in lines:
                 clean_line = line.lstrip("-*•0123456789.) ").strip()
@@ -84,7 +78,9 @@ class MailThread(models.AbstractModel):
                     bullet_items.append(f"<li>{html.escape(clean_line)}</li>")
 
             if bullet_items:
-                body_html = f"<p><b>🤖 AI Summary</b></p><ul>{''.join(bullet_items)}</ul>"
+                body_html = (
+                    f"<p><b>🤖 AI Summary</b></p><ul>{''.join(bullet_items)}</ul>"
+                )
             else:
                 body_html = f"<p><b>🤖 AI Summary</b></p><p>{html.escape(summary)}</p>"
 
@@ -113,9 +109,7 @@ class MailThread(models.AbstractModel):
             ("message_type", "in", ("email", "comment")),
             ("body", "!=", ""),
         ]
-        msgs = self.env["mail.message"].search(
-            domain, order="date desc", limit=limit
-        )
+        msgs = self.env["mail.message"].search(domain, order="date desc", limit=limit)
         if not msgs:
             return ""
 
@@ -128,6 +122,7 @@ class MailThread(models.AbstractModel):
                 body = self.env["mail.render.mixin"]._replace_local_links(body)
                 # Simple tag stripping (Odoo provides no public helper)
                 import re
+
                 body = re.sub(r"<[^>]+>", "", body).strip()
             # Ignore automated AI summary notes from conversation context
             if "🤖 AI Summary" in body:
@@ -153,9 +148,7 @@ class MailThread(models.AbstractModel):
 
         encrypted_key = ICP.get_param(f"{prefix}.ai_api_key", "")
         if not encrypted_key:
-            raise UserError(
-                _("No API key configured. Go to Settings → AI Assistant.")
-            )
+            raise UserError(_("No API key configured. Go to Settings → AI Assistant."))
 
         try:
             api_key = decrypt_api_key(encrypted_key, env=self.env)
@@ -173,8 +166,12 @@ class MailThread(models.AbstractModel):
 
         provider = AIProviderFactory.create(provider_name, api_key)
 
-        return provider, model_name, {
-            "timeout": timeout,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-        }
+        return (
+            provider,
+            model_name,
+            {
+                "timeout": timeout,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            },
+        )

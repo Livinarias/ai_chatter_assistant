@@ -7,7 +7,7 @@ from unittest.mock import patch
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from .common import AITestCase, MOCK_OPENAI_RESPONSE, _make_mock_response
+from .common import MOCK_OPENAI_RESPONSE, AITestCase, _make_mock_response
 
 
 @tagged("post_install", "-at_install")
@@ -34,11 +34,7 @@ class TestAIReplyWizard(AITestCase):
             "source_id": self.partner.id,
         }
         vals.update(kwargs)
-        return (
-            self.env["ai.reply.wizard"]
-            .with_user(self.ai_user)
-            .create(vals)
-        )
+        return self.env["ai.reply.wizard"].with_user(self.ai_user).create(vals)
 
     @patch(
         "ai_chatter_assistant.services.providers.base.requests.post",
@@ -50,9 +46,7 @@ class TestAIReplyWizard(AITestCase):
     )
     def test_generate_reply_fills_field(self, mock_decrypt, mock_post):
         """Generating a reply populates the generated_reply field."""
-        wizard = self._create_wizard(
-            instructions="Offer a 5% discount."
-        )
+        wizard = self._create_wizard(instructions="Offer a 5% discount.")
         result = wizard.action_generate_reply()
 
         # Wizard should stay open

@@ -12,7 +12,7 @@ import html
 import logging
 
 from markupsafe import Markup
-from odoo import _, api, fields, models
+from odoo import _, fields, models
 from odoo.exceptions import UserError
 
 from ..services.decorators import ai_feature
@@ -67,9 +67,7 @@ class AIReplyWizard(models.TransientModel):
         # 1. Collect messages -------------------------------------------
         messages_text = source._ai_collect_messages(10)
         if not messages_text:
-            raise UserError(
-                _("There are no messages to base the reply on.")
-            )
+            raise UserError(_("There are no messages to base the reply on."))
 
         # 2. Build prompt -----------------------------------------------
         user_instructions = self.instructions or _("Reply professionally.")
@@ -87,9 +85,7 @@ class AIReplyWizard(models.TransientModel):
         # 3. Call AI ----------------------------------------------------
         provider, model, kwargs = source._ai_get_provider_and_params()
         try:
-            result = provider.chat_completion(
-                ai_messages, model, **kwargs
-            )
+            result = provider.chat_completion(ai_messages, model, **kwargs)
         except AIProviderError as exc:
             raise UserError(str(exc)) from exc
 
@@ -97,17 +93,30 @@ class AIReplyWizard(models.TransientModel):
         reply = result.get("content", "").strip()
         if reply:
             import re
+
             # Strip XML thinking tags (e.g. <think>...</think>)
             reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
             # If the model produced a markdown thinking block (e.g. "Here's a thinking process: ...")
             if "Here's a thinking process" in reply or "Thinking Process:" in reply:
                 # Look for common end-of-thinking markers or quotes
-                parts = re.split(r"(?:Drafting the Reply[^\n]*\n|Here is the (?:draft|reply)[^\n]*:\s*|\n\n---\n\n)", reply, flags=re.IGNORECASE)
+                parts = re.split(
+                    r"(?:Drafting the Reply[^\n]*\n|Here is the (?:draft|reply)[^\n]*:\s*|\n\n---\n\n)",
+                    reply,
+                    flags=re.IGNORECASE,
+                )
                 if len(parts) > 1:
                     reply = parts[-1].strip()
 
-            paragraphs = [f"<p>{html.escape(p).replace(chr(10), '<br/>')}</p>" for p in reply.split("\n\n") if p.strip()]
-            self.generated_reply = Markup("".join(paragraphs)) if paragraphs else Markup(f"<p>{html.escape(reply)}</p>")
+            paragraphs = [
+                f"<p>{html.escape(p).replace(chr(10), '<br/>')}</p>"
+                for p in reply.split("\n\n")
+                if p.strip()
+            ]
+            self.generated_reply = (
+                Markup("".join(paragraphs))
+                if paragraphs
+                else Markup(f"<p>{html.escape(reply)}</p>")
+            )
         else:
             self.generated_reply = ""
 

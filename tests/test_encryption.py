@@ -7,10 +7,9 @@ import unittest
 from unittest.mock import patch
 
 from cryptography.fernet import Fernet
-
 from odoo.tests import tagged
 
-from ..services.encryption import decrypt_api_key, encrypt_api_key, _get_fernet
+from ..services.encryption import _get_fernet, decrypt_api_key, encrypt_api_key
 
 
 @tagged("post_install", "-at_install")

@@ -23,7 +23,7 @@ import requests
 _logger = logging.getLogger(__name__)
 
 # Default values – can be overridden per-call or via Odoo settings.
-DEFAULT_TIMEOUT = 15      # seconds
+DEFAULT_TIMEOUT = 15  # seconds
 DEFAULT_TEMPERATURE = 0.3
 DEFAULT_MAX_TOKENS = 1024
 
@@ -69,7 +69,9 @@ class AIProvider(abc.ABC):
 
         _logger.debug(
             "AI request → %s | model=%s | tokens_limit=%s",
-            self.ENDPOINT, model, max_tokens,
+            self.ENDPOINT,
+            model,
+            max_tokens,
         )
 
         read_timeout = max(5, int(timeout or DEFAULT_TIMEOUT))
@@ -93,16 +95,16 @@ class AIProvider(abc.ABC):
             ) from exc
 
         if response.status_code == 401:
-            raise AIProviderError(
-                f"Invalid or expired API key for {self.name}."
-            )
+            raise AIProviderError(f"Invalid or expired API key for {self.name}.")
         if response.status_code == 429:
             raise AIProviderError(
                 f"Rate limit exceeded on {self.name}. Try again later."
             )
         if response.status_code >= 400:
-            detail = self._safe_json(response).get("error", {}).get(
-                "message", response.text[:300]
+            detail = (
+                self._safe_json(response)
+                .get("error", {})
+                .get("message", response.text[:300])
             )
             raise AIProviderError(
                 f"{self.name} returned HTTP {response.status_code}: {detail}"

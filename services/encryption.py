@@ -27,6 +27,7 @@ def _resolve_env(env=None):
         return env
     try:
         from odoo.http import request
+
         if request and hasattr(request, "env") and request.env:
             return request.env
     except Exception:
@@ -93,7 +94,9 @@ def get_encryption_key(env=None, mode=None) -> str:
             # Auto-generate key in system parameters on first use
             new_key = Fernet.generate_key().decode()
             ICP.set_param(_PARAM_KEY, new_key)
-            _logger.info("Generated and saved new AI master encryption key in ir.config_parameter.")
+            _logger.info(
+                "Generated and saved new AI master encryption key in ir.config_parameter."
+            )
             return new_key
         except Exception as exc:
             _logger.warning("Could not access ir.config_parameter: %s", exc)
@@ -149,13 +152,17 @@ def decrypt_api_key(encrypted_key: str, env=None, mode=None) -> str:
         alt_mode = "simple" if primary_mode == "secure" else "secure"
         try:
             alt_fernet = _get_fernet(env=env, mode=alt_mode)
-            decrypted = alt_fernet.decrypt(encrypted_key.encode("utf-8")).decode("utf-8")
+            decrypted = alt_fernet.decrypt(encrypted_key.encode("utf-8")).decode(
+                "utf-8"
+            )
             _logger.info("Decrypted API key using alternate mode '%s'.", alt_mode)
             return decrypted
         except Exception:
             pass
 
-        _logger.error("Failed to decrypt API key – token invalid or master key changed.")
+        _logger.error(
+            "Failed to decrypt API key – token invalid or master key changed."
+        )
         raise ValueError(
             "Cannot decrypt the stored API key. "
             "The encryption key or mode may have changed since the value was saved."

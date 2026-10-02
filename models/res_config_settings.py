@@ -17,11 +17,7 @@ import os
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from ..services.encryption import (
-    decrypt_api_key,
-    encrypt_api_key,
-    is_env_key_present,
-)
+from ..services.encryption import decrypt_api_key, encrypt_api_key, is_env_key_present
 from ..services.providers.base import AIProviderError
 from ..services.providers.factory import AIProviderFactory
 
@@ -65,7 +61,7 @@ class ResConfigSettings(models.TransientModel):
         default="simple",
         required=True,
         help="Simple mode generates and stores the encryption key in System Parameters. "
-             "High Security mode requires the AI_ENCRYPTION_KEY environment variable.",
+        "High Security mode requires the AI_ENCRYPTION_KEY environment variable.",
     )
 
     ai_env_key_detected = fields.Boolean(
@@ -125,7 +121,9 @@ class ResConfigSettings(models.TransientModel):
         encrypted = ICP.get_param(f"{_P}.ai_api_key", "")
         mode = ICP.get_param(f"{_P}.ai_encryption_mode", "simple")
         try:
-            res["ai_api_key"] = decrypt_api_key(encrypted, env=self.env, mode=mode) if encrypted else ""
+            res["ai_api_key"] = (
+                decrypt_api_key(encrypted, env=self.env, mode=mode) if encrypted else ""
+            )
         except ValueError:
             _logger.warning("Could not decrypt stored AI API key.")
             res["ai_api_key"] = ""
@@ -145,10 +143,12 @@ class ResConfigSettings(models.TransientModel):
                 )
             try:
                 from cryptography.fernet import Fernet
+
                 Fernet(env_key.encode())
             except Exception as exc:
                 raise UserError(
-                    _("The configured AI_ENCRYPTION_KEY is not a valid Fernet key: %s") % exc
+                    _("The configured AI_ENCRYPTION_KEY is not a valid Fernet key: %s")
+                    % exc
                 )
 
         super().set_values()
@@ -198,7 +198,8 @@ class ResConfigSettings(models.TransientModel):
             "tag": "display_notification",
             "params": {
                 "title": _("Connection Successful ✅"),
-                "message": _("Successfully connected to %s with model %s.") % (provider_name, model_name),
+                "message": _("Successfully connected to %s with model %s.")
+                % (provider_name, model_name),
                 "type": "success",
                 "sticky": False,
             },

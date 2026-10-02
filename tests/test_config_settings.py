@@ -7,7 +7,7 @@ from unittest.mock import patch
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from .common import AITestCase, MOCK_OPENAI_RESPONSE, _make_mock_response
+from .common import MOCK_OPENAI_RESPONSE, AITestCase, _make_mock_response
 
 
 @tagged("post_install", "-at_install")
@@ -16,15 +16,11 @@ class TestConfigSettings(AITestCase):
 
     def test_set_and_get_provider(self):
         """Provider selection is persisted in ir.config_parameter."""
-        settings = self.env["res.config.settings"].create(
-            {"ai_provider": "anthropic"}
-        )
+        settings = self.env["res.config.settings"].create({"ai_provider": "anthropic"})
         settings.set_values()
 
         ICP = self.env["ir.config_parameter"].sudo()
-        self.assertEqual(
-            ICP.get_param("ai_chatter_assistant.ai_provider"), "anthropic"
-        )
+        self.assertEqual(ICP.get_param("ai_chatter_assistant.ai_provider"), "anthropic")
 
     @patch(
         "ai_chatter_assistant.models.res_config_settings.encrypt_api_key",
@@ -48,6 +44,7 @@ class TestConfigSettings(AITestCase):
     def test_set_values_secure_mode_without_env_raises(self):
         """UserError when secure mode is selected but AI_ENCRYPTION_KEY is missing."""
         import os
+
         with patch.dict(os.environ, {"AI_ENCRYPTION_KEY": ""}):
             settings = self.env["res.config.settings"].create(
                 {"ai_encryption_mode": "secure", "ai_api_key": "sk-test"}
@@ -132,9 +129,7 @@ class TestConfigSettings(AITestCase):
         ICP.search([("key", "=", "ai_chatter_assistant.encryption_key")]).unlink()
 
         from ..services.encryption import get_or_create_encryption_key
+
         key = get_or_create_encryption_key(self.env)
         self.assertTrue(key)
-        self.assertEqual(
-            ICP.get_param("ai_chatter_assistant.encryption_key"),
-            key
-        )
+        self.assertEqual(ICP.get_param("ai_chatter_assistant.encryption_key"), key)

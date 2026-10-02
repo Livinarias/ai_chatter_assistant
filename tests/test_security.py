@@ -2,7 +2,6 @@
 
 """Tests for security: ACLs, record rules, and groups."""
 
-from odoo.exceptions import AccessError
 from odoo.tests import tagged
 
 from .common import AITestCase
@@ -19,9 +18,7 @@ class TestSecurity(AITestCase):
 
     def test_ai_user_has_group(self):
         """The test AI user belongs to group_ai_user."""
-        self.assertTrue(
-            self.ai_user.has_group("ai_chatter_assistant.group_ai_user")
-        )
+        self.assertTrue(self.ai_user.has_group("ai_chatter_assistant.group_ai_user"))
 
     def test_non_ai_user_lacks_group(self):
         """The non-AI test user does not belong to group_ai_user."""
@@ -42,9 +39,7 @@ class TestSecurity(AITestCase):
 
         # Switch to non-admin user
         ICP_user = self.env["ir.config_parameter"].with_user(self.ai_user)
-        params = ICP_user.search(
-            [("key", "like", "ai_chatter_assistant.%")]
-        )
+        params = ICP_user.search([("key", "like", "ai_chatter_assistant.%")])
         # Record rule should filter these out
         self.assertFalse(
             params,
@@ -57,9 +52,7 @@ class TestSecurity(AITestCase):
         ICP.set_param("ai_chatter_assistant.ai_provider", "openai")
 
         # Admin search — should find the param
-        params = ICP.search(
-            [("key", "=", "ai_chatter_assistant.ai_provider")]
-        )
+        params = ICP.search([("key", "=", "ai_chatter_assistant.ai_provider")])
         self.assertTrue(params.exists())
 
     def test_ai_user_can_create_usage_log(self):

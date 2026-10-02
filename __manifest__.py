@@ -20,7 +20,7 @@ Key Features:
 
 Third-Party Services & Privacy Disclosure:
 ------------------------------------------
-This module connects directly and exclusively from your Odoo server to the external AI provider 
+This module connects directly and exclusively from your Odoo server to the external AI provider
 endpoint selected in your settings (OpenAI, Anthropic, DeepSeek, or OpenRouter) using your own API key.
 * No intermediate or relay servers are used.
 * Message content is sent only upon explicit user action (clicking an AI button).

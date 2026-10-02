@@ -3,13 +3,11 @@
 """Tests for rate limiting logic in ai.usage.log."""
 
 from datetime import timedelta
-from unittest.mock import patch
 
 from odoo import fields
-from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from .common import AITestCase, MOCK_OPENAI_RESPONSE, _make_mock_response
+from .common import AITestCase
 
 
 @tagged("post_install", "-at_install")
@@ -36,9 +34,7 @@ class TestRateLimiting(AITestCase):
         """User with fewer calls than the limit is not blocked."""
         self._create_log_entries(self.ai_user, 10)
         UsageLog = self.env["ai.usage.log"].sudo()
-        self.assertFalse(
-            UsageLog._is_rate_limited(self.ai_user, "chatter_summary")
-        )
+        self.assertFalse(UsageLog._is_rate_limited(self.ai_user, "chatter_summary"))
 
     def test_at_limit_is_rate_limited(self):
         """User with exactly the limit number of calls is blocked."""
@@ -47,9 +43,7 @@ class TestRateLimiting(AITestCase):
         self._create_log_entries(self.ai_user, 5)
 
         UsageLog = self.env["ai.usage.log"].sudo()
-        self.assertTrue(
-            UsageLog._is_rate_limited(self.ai_user, "chatter_summary")
-        )
+        self.assertTrue(UsageLog._is_rate_limited(self.ai_user, "chatter_summary"))
 
     def test_zero_limit_means_unlimited(self):
         """Setting rate limit to 0 disables rate limiting."""
@@ -58,9 +52,7 @@ class TestRateLimiting(AITestCase):
         self._create_log_entries(self.ai_user, 1000)
 
         UsageLog = self.env["ai.usage.log"].sudo()
-        self.assertFalse(
-            UsageLog._is_rate_limited(self.ai_user, "chatter_summary")
-        )
+        self.assertFalse(UsageLog._is_rate_limited(self.ai_user, "chatter_summary"))
 
     def test_error_entries_not_counted(self):
         """Error log entries should not count toward the rate limit."""
@@ -78,9 +70,7 @@ class TestRateLimiting(AITestCase):
                 }
             )
         # Only success entries count, so still not limited
-        self.assertFalse(
-            UsageLog._is_rate_limited(self.ai_user, "chatter_summary")
-        )
+        self.assertFalse(UsageLog._is_rate_limited(self.ai_user, "chatter_summary"))
 
     def test_old_entries_not_counted(self):
         """Entries older than 1 hour should not count."""
@@ -100,9 +90,7 @@ class TestRateLimiting(AITestCase):
             # Force old timestamp
             log.write({"timestamp": old_time})
 
-        self.assertFalse(
-            UsageLog._is_rate_limited(self.ai_user, "chatter_summary")
-        )
+        self.assertFalse(UsageLog._is_rate_limited(self.ai_user, "chatter_summary"))
 
     def test_different_users_independent(self):
         """Rate limits are per-user, not global."""
@@ -114,6 +102,4 @@ class TestRateLimiting(AITestCase):
         non_ai = self.non_ai_user
         UsageLog = self.env["ai.usage.log"].sudo()
         # Other user should not be limited
-        self.assertFalse(
-            UsageLog._is_rate_limited(non_ai, "chatter_summary")
-        )
+        self.assertFalse(UsageLog._is_rate_limited(non_ai, "chatter_summary"))

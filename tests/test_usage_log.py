@@ -20,9 +20,7 @@ class TestUsageLog(AITestCase):
             status="success",
             tokens_used=150,
         )
-        log = UsageLog.search(
-            [("user_id", "=", self.ai_user.id)], limit=1
-        )
+        log = UsageLog.search([("user_id", "=", self.ai_user.id)], limit=1)
         self.assertTrue(log.exists())
         self.assertEqual(log.feature, "chatter_summary")
         self.assertEqual(log.status, "success")
@@ -63,15 +61,18 @@ class TestUsageLog(AITestCase):
             feature="lead_generation",
             status="success",
         )
-        log = UsageLog.search(
-            [("user_id", "=", self.ai_user.id)], limit=1
-        )
+        log = UsageLog.search([("user_id", "=", self.ai_user.id)], limit=1)
         self.assertEqual(log.provider, "anthropic")
 
     def test_all_features_valid(self):
         """All selection keys for 'feature' are accepted."""
         UsageLog = self.env["ai.usage.log"].sudo()
-        for feature in ("chatter_summary", "reply_draft", "lead_generation", "connection_test"):
+        for feature in (
+            "chatter_summary",
+            "reply_draft",
+            "lead_generation",
+            "connection_test",
+        ):
             log = UsageLog.create(
                 {
                     "user_id": self.ai_user.id,

@@ -7,7 +7,7 @@ from unittest.mock import patch
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from .common import AITestCase, MOCK_LEAD_JSON_RESPONSE, _make_mock_response
+from .common import MOCK_LEAD_JSON_RESPONSE, AITestCase, _make_mock_response
 
 
 @tagged("post_install", "-at_install")
@@ -57,14 +57,12 @@ class TestCrmLead(AITestCase):
     )
     def test_create_lead_no_messages_raises(self, mock_decrypt):
         """UserError when source record has no messages."""
-        empty_partner = self.env["res.partner"].sudo().create(
-            {"name": "Empty Lead Partner"}
+        empty_partner = (
+            self.env["res.partner"].sudo().create({"name": "Empty Lead Partner"})
         )
         CrmLead = self.env["crm.lead"].with_user(self.ai_user)
         with self.assertRaises(UserError):
-            CrmLead.action_ai_create_lead_from_thread(
-                "res.partner", empty_partner.id
-            )
+            CrmLead.action_ai_create_lead_from_thread("res.partner", empty_partner.id)
 
     def test_parse_lead_json_valid(self):
         """_ai_parse_lead_json extracts data from valid JSON."""
@@ -91,7 +89,5 @@ class TestCrmLead(AITestCase):
 
     def test_ai_generated_field(self):
         """The ai_generated field exists and defaults to False."""
-        lead = self.env["crm.lead"].create(
-            {"name": "Manual Lead"}
-        )
+        lead = self.env["crm.lead"].create({"name": "Manual Lead"})
         self.assertFalse(lead.ai_generated)

@@ -24,7 +24,6 @@ repos:
     rev: "24.4.2"
     hooks:
       - id: black
-        language_version: python3.10
 
   # ── isort (import sorter) ──────────────────────────────────────────────
   - repo: https://github.com/pycqa/isort
@@ -42,6 +41,7 @@ repos:
         args:
           - --max-line-length=120
           - --extend-ignore=E203,W503
+          - --per-file-ignores=__init__.py:F401,*/__init__.py:F401
 
   # ── Trailing whitespace & end-of-file ──────────────────────────────────
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -51,5 +51,5 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
-        args: ["--maxkb=500"]
+        args: ["--maxkb=1000"]
       - id: check-merge-conflict

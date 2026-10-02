@@ -41,9 +41,7 @@ def ai_feature(feature_name: str):
         @functools.wraps(method)
         def wrapper(self, *args, **kwargs):
             # ----- 1. Permission gate -----
-            if not self.env.user.has_group(
-                "ai_chatter_assistant.group_ai_user"
-            ):
+            if not self.env.user.has_group("ai_chatter_assistant.group_ai_user"):
                 raise AccessError(
                     "You do not have permission to use AI features. "
                     "Contact your administrator."
@@ -64,9 +62,9 @@ def ai_feature(feature_name: str):
                     user=self.env.user,
                     feature=feature_name,
                     status="success",
-                    tokens_used=result.get("tokens_used", 0)
-                    if isinstance(result, dict)
-                    else 0,
+                    tokens_used=(
+                        result.get("tokens_used", 0) if isinstance(result, dict) else 0
+                    ),
                 )
                 return result
             except Exception as exc:
