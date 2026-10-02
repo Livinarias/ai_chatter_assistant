@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
-    "name": "AI Chatter Assistant",
+    "name": "LAN AI Chatter Assistant",
     "version": "17.0.1.0.0",
     "category": "Productivity",
     "summary": "AI summaries, smart reply drafts, and CRM lead generation in Chatter",
