@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- =============================================================
+             AI Reply Wizard — Form view (modal) (Odoo 17)
+             ============================================================= -->
+        <record id="view_ai_reply_wizard_form" model="ir.ui.view">
+            <field name="name">ai.reply.wizard.form</field>
+            <field name="model">ai.reply.wizard</field>
+            <field name="arch" type="xml">
+                <form string="AI Reply Assistant">
+                    <sheet>
+                        <group>
+                            <field name="source_model" invisible="1"/>
+                            <field name="source_id" invisible="1"/>
+                        </group>
+
+                        <group string="📝 Instructions">
+                            <field name="instructions"
+                                   placeholder="e.g. Offer a 5%% discount and suggest a meeting next week..."
+                                   nolabel="1"
+                                   colspan="2"/>
+                        </group>
+
+                        <group string="🤖 Generated Reply"
+                               invisible="not generated_reply">
+                            <field name="generated_reply"
+                                   nolabel="1"
+                                   colspan="2"/>
+                        </group>
+                    </sheet>
+
+                    <footer>
+                        <button name="action_generate_reply"
+                                string="✨ Generate Draft"
+                                type="object"
+                                class="btn-primary"/>
+                        <button name="action_post_reply"
+                                string="📤 Post Reply"
+                                type="object"
+                                class="btn-success"
+                                invisible="not generated_reply"/>
+                        <button string="Cancel"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- =============================================================
+             Action to open the wizard (used by chatter buttons)
+             ============================================================= -->
+        <record id="action_ai_reply_wizard" model="ir.actions.act_window">
+            <field name="name">AI Reply Assistant</field>
+            <field name="res_model">ai.reply.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

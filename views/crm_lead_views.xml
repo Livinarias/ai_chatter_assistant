@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- =============================================================
+             CRM Lead form — add AI-generated badge (Odoo 17)
+             ============================================================= -->
+        <record id="crm_lead_view_form_inherit_ai" model="ir.ui.view">
+            <field name="name">crm.lead.view.form.inherit.ai_chatter_assistant</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_title')]" position="after">
+                    <div invisible="not ai_generated">
+                        <span class="badge text-bg-info">🤖 AI Generated</span>
+                    </div>
+                </xpath>
+                <field name="priority" position="after">
+                    <field name="ai_generated" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- =============================================================
+             Module category (appears in Settings → Users → Access Rights)
+             ============================================================= -->
+        <record id="module_category_ai_assistant" model="ir.module.category">
+            <field name="name">AI Assistant</field>
+            <field name="description">
+                Access rights for the AI Chatter &amp; CRM Assistant module.
+            </field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- =============================================================
+             Group: AI User
+             Grants access to use AI features (summarise, draft, create
+             leads).  Inherits from Internal User so that only employees
+             can interact with the assistant.
+             ============================================================= -->
+        <record id="group_ai_user" model="res.groups">
+            <field name="name">AI Assistant User</field>
+            <field name="comment">
+                Members of this group can invoke AI features such as
+                chatter summaries, reply drafts and lead generation.
+            </field>
+            <field name="category_id" ref="module_category_ai_assistant"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+    </data>
+</odoo>

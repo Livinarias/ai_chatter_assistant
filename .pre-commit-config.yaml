@@ -1,0 +1,55 @@
+# Pre-commit configuration for OCA-standard quality checks.
+# See https://pre-commit.com for more information.
+#
+# Install hooks locally:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Run manually:
+#   pre-commit run --all-files
+
+repos:
+  # ── OCA pylint-odoo ────────────────────────────────────────────────────
+  - repo: https://github.com/OCA/pylint-odoo
+    rev: v9.1.2
+    hooks:
+      - id: pylint_odoo
+        args:
+          - --rcfile=.pylintrc
+        additional_dependencies:
+          - pylint-odoo
+
+  # ── Black (code formatter) ─────────────────────────────────────────────
+  - repo: https://github.com/psf/black
+    rev: "24.4.2"
+    hooks:
+      - id: black
+        language_version: python3.10
+
+  # ── isort (import sorter) ──────────────────────────────────────────────
+  - repo: https://github.com/pycqa/isort
+    rev: "5.13.2"
+    hooks:
+      - id: isort
+        args:
+          - --profile=black
+
+  # ── flake8 (linter) ───────────────────────────────────────────────────
+  - repo: https://github.com/pycqa/flake8
+    rev: "7.1.0"
+    hooks:
+      - id: flake8
+        args:
+          - --max-line-length=120
+          - --extend-ignore=E203,W503
+
+  # ── Trailing whitespace & end-of-file ──────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: check-merge-conflict

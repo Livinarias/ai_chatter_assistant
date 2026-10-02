@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- =============================================================
+             Settings view — AI Assistant section (Odoo 17)
+             Visible only to Administrators (base.group_system)
+             ============================================================= -->
+        <record id="res_config_settings_view_form_ai" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.ai_chatter_assistant</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="100"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app data-string="AI Assistant"
+                         string="AI Assistant"
+                         name="ai_chatter_assistant"
+                         groups="base.group_system">
+
+                        <block title="AI Assistant Configuration" id="ai_assistant_config">
+                            <!-- Provider selection -->
+                            <setting id="ai_provider_setting"
+                                     string="AI Provider"
+                                     help="Select the AI service to use for summaries, reply drafts and lead generation.">
+                                <field name="ai_provider" widget="selection"/>
+                            </setting>
+
+                            <!-- API Key (masked) -->
+                            <setting id="ai_api_key_setting"
+                                     string="API Key"
+                                     help="Your API key will be encrypted before storage."
+                                     invisible="not ai_provider">
+                                <field name="ai_api_key"
+                                       password="True"
+                                       placeholder="sk-..."/>
+                            </setting>
+
+                            <!-- Encryption Mode -->
+                            <setting id="ai_encryption_mode_setting"
+                                     string="Encryption Mode"
+                                     help="Choose how the master encryption key is managed."
+                                     invisible="not ai_provider">
+                                <field name="ai_encryption_mode" widget="radio"/>
+                                <field name="ai_env_key_detected" invisible="1"/>
+                                <div class="text-muted mt-1" invisible="ai_encryption_mode != 'simple'">
+                                    <i class="fa fa-info-circle text-info me-1"/>
+                                    <strong>Simple:</strong> Master key is automatically generated and stored in System Parameters.
+                                </div>
+                                <div class="text-success mt-1" invisible="ai_encryption_mode != 'secure' or not ai_env_key_detected">
+                                    <i class="fa fa-check-circle me-1"/>
+                                    <strong>High Security:</strong> Variable <code>AI_ENCRYPTION_KEY</code> detected in environment.
+                                </div>
+                                <div class="text-danger mt-1" invisible="ai_encryption_mode != 'secure' or ai_env_key_detected">
+                                    <i class="fa fa-exclamation-triangle me-1"/>
+                                    <strong>Warning:</strong> <code>AI_ENCRYPTION_KEY</code> is NOT set in your container/environment.
+                                </div>
+                            </setting>
+
+                            <!-- Model name -->
+                            <setting id="ai_model_name_setting"
+                                     string="Model Name"
+                                     help="e.g. gpt-4o-mini, claude-3-5-haiku, deepseek-chat"
+                                     invisible="not ai_provider">
+                                <field name="ai_model_name"/>
+                            </setting>
+
+                            <!-- Timeout -->
+                            <setting id="ai_timeout_setting"
+                                     string="Request Timeout"
+                                     help="Maximum seconds to wait for an AI response."
+                                     invisible="not ai_provider">
+                                <field name="ai_timeout"/>
+                            </setting>
+
+                            <!-- Temperature -->
+                            <setting id="ai_temperature_setting"
+                                     string="Temperature"
+                                     help="Lower = more deterministic (0.0–2.0)."
+                                     invisible="not ai_provider">
+                                <field name="ai_temperature"/>
+                            </setting>
+
+                            <!-- Max tokens -->
+                            <setting id="ai_max_tokens_setting"
+                                     string="Max Tokens"
+                                     help="Maximum length of the AI response in tokens."
+                                     invisible="not ai_provider">
+                                <field name="ai_max_tokens"/>
+                            </setting>
+
+                            <!-- Rate limit -->
+                            <setting id="ai_rate_limit_setting"
+                                     string="Rate Limit (per user / hour)"
+                                     help="Set to 0 for unlimited. Default: 50 calls/hour."
+                                     invisible="not ai_provider">
+                                <field name="ai_rate_limit_per_hour"/>
+                            </setting>
+
+                            <!-- Test Connection button -->
+                            <setting id="ai_test_conn_setting"
+                                     string="Test Connection"
+                                     help="Verify API credentials and connectivity with the chosen AI provider."
+                                     invisible="not ai_provider">
+                                <div class="mt8">
+                                    <button name="action_ai_test_connection"
+                                            string="🔌 Test Connection"
+                                            type="object"
+                                            class="btn-primary"
+                                            icon="fa-plug"/>
+                                </div>
+                            </setting>
+                        </block>
+
+                        <!-- Help and Usage Tips -->
+                        <block title="Tips &amp; Usage" id="ai_tips_block">
+                            <div class="alert alert-light border d-flex align-items-center" role="alert">
+                                <i class="fa fa-info-circle fa-2x text-primary me-3"/>
+                                <div>
+                                    <strong>How to use the AI Assistant:</strong>
+                                    <ul class="mb-0 mt-1 ps-3">
+                                        <li><strong>🤖 Summarise:</strong> Click in any Chatter thread to generate an executive bullet-point summary.</li>
+                                        <li><strong>✨ AI Reply:</strong> Open the reply assistant to compose context-aware answers with custom instructions.</li>
+                                        <li><strong>🎯 Create Lead:</strong> Convert customer conversations directly into CRM opportunities in 1 click.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </block>
+
+                    </app>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

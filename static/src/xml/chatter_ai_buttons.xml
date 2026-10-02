@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <!-- =================================================================
+         OWL Chatter AI Buttons (Odoo 17)
+
+         Adds "AI Summarise", "AI Reply" and "Create Lead" buttons to the chatter widget.
+         ================================================================= -->
+    <t t-name="ai_chatter_assistant.ChatterAIButtons" t-inherit="mail.Chatter" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o-mail-Chatter-top')]" position="after">
+            <div class="d-flex gap-1 px-3 py-2 border-bottom bg-light align-items-center"
+                 t-if="props.threadId">
+                <button class="btn btn-sm btn-outline-primary"
+                        t-on-click="() => this._onAiSummarize()"
+                        title="Generate an AI summary of this thread">
+                    🤖 Summarise
+                </button>
+                <button class="btn btn-sm btn-outline-secondary"
+                        t-on-click="() => this._onAiReply()"
+                        title="Open the AI reply assistant">
+                    ✨ AI Reply
+                </button>
+                <button class="btn btn-sm btn-outline-success"
+                        t-if="props.threadModel !== 'crm.lead'"
+                        t-on-click="() => this._onAiCreateLead()"
+                        title="Extract opportunity and create CRM Lead with AI">
+                    🎯 Create Lead
+                </button>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

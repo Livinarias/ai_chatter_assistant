@@ -1,0 +1,113 @@
+name: CI — Lint, Test & Coverage
+
+on:
+  push:
+    branches: [main, "17.0", "18.0"]
+  pull_request:
+    branches: [main, "17.0", "18.0"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ADDON_NAME: ai_chatter_assistant
+
+jobs:
+  # -----------------------------------------------------------------------
+  # Pre-commit quality checks (pylint-odoo, flake8, isort, black)
+  # -----------------------------------------------------------------------
+  pre-commit:
+    name: Pre-commit checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - uses: pre-commit/action@v3.0.1
+
+  # -----------------------------------------------------------------------
+  # Odoo tests with coverage — runs on both 17.0 and 18.0
+  # -----------------------------------------------------------------------
+  test:
+    name: "Tests — Odoo ${{ matrix.odoo_version }}"
+    runs-on: ubuntu-latest
+    needs: pre-commit
+
+    strategy:
+      fail-fast: false
+      matrix:
+        odoo_version: ["17.0", "18.0"]
+        include:
+          - odoo_version: "17.0"
+            oca_image: "ghcr.io/oca/oca-ci/py3.10-odoo17.0:latest"
+          - odoo_version: "18.0"
+            oca_image: "ghcr.io/oca/oca-ci/py3.10-odoo18.0:latest"
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    container:
+      image: ${{ matrix.oca_image }}
+
+    env:
+      # Test-only Fernet key (never used in production)
+      AI_ENCRYPTION_KEY: ${{ secrets.AI_ENCRYPTION_KEY_TEST }}
+      PGHOST: postgres
+      PGUSER: odoo
+      PGPASSWORD: odoo
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: |
+          pip install cryptography coverage
+
+      - name: Create Odoo addons symlink
+        run: |
+          # Link our addon into the Odoo addons path
+          ln -s $GITHUB_WORKSPACE/$ADDON_NAME /opt/odoo/addons/$ADDON_NAME
+
+      - name: Run tests with coverage
+        run: |
+          coverage run --source=$ADDON_NAME \
+            /opt/odoo/odoo-bin \
+            --test-enable \
+            --stop-after-init \
+            --no-http \
+            -d odoo_test \
+            -i $ADDON_NAME \
+            --test-tags=/$ADDON_NAME \
+            --log-level=test
+
+      - name: Coverage report
+        run: |
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          coverage report --format=markdown >> $GITHUB_STEP_SUMMARY || true
+          coverage report --fail-under=95
+          coverage xml -o coverage.xml
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          flags: "odoo${{ matrix.odoo_version }}"
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
